@@ -55,7 +55,9 @@ def recent_entries(request, page_number=1):
     """Show the [n] most recent entries.
     """
     num = getattr(settings, 'MUMBLR_NUM_ENTRIES_PER_PAGE', 10)
-    entry_list = EntryType.live_entries()
+    entry_list = list(EntryType.live_entries())
+    
+    entry_list = sorted(entry_list, lambda e1, e2: cmp(e2.publish_date, e1.publish_date))
     paginator = Paginator(entry_list, num)
     try:
         entries = paginator.page(page_number)
@@ -69,20 +71,26 @@ def recent_entries(request, page_number=1):
     return render_to_response(_lookup_template('list_entries'), context,
                               context_instance=RequestContext(request))
 
-def entry_detail(request, date, slug):
+def entry_detail(request, date=None, slug=None, permalink=None):
     """Display one entry with the given slug and date.
     """
-    try:
-        today = datetime.strptime(date, "%Y/%b/%d")
-        tomorrow = today + timedelta(days=1)
-    except:
-        raise Http404
+    if permalink:
+        try:
+            entry = EntryType.objects(permalink=permalink)[0]
+        except IndexError:
+            raise Http404
+    else:
+        try:
+            today = datetime.strptime(date, "%Y/%b/%d")
+            tomorrow = today + timedelta(days=1)
+        except:
+            raise Http404
 
-    try:
-        entry = EntryType.objects(publish_date__gte=today, 
-                                  publish_date__lt=tomorrow, slug=slug)[0]
-    except IndexError:
-        raise Http404
+        try:
+            entry = EntryType.objects(publish_date__gte=today, 
+                                      publish_date__lt=tomorrow, slug=slug)[0]
+        except IndexError:
+            raise Http404
 
     # Select correct form for entry type
     form_class = Comment.CommentForm

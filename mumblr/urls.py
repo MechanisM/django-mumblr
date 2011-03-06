@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 from django.contrib.auth.views import login, logout
-
 from mumblr.views.core import (recent_entries, tagged_entries, entry_detail, 
                                tag_cloud, archive, RssFeed, AtomFeed)
 from mumblr.views.admin import (dashboard, delete_entry, add_entry, edit_entry,
@@ -12,6 +12,10 @@ feeds = {
 }
 
 urlpatterns = patterns('',
+   url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
+)
+
+urlpatterns += patterns('',
     url('^$', recent_entries, name='recent-entries'),
     url('^(?P<page_number>\d+)/$', recent_entries, name='recent-entries'),
     url('^(\d{4}/\w{3}/\d{2})/([\w-]+)/$', entry_detail, name='entry-detail'),
@@ -34,4 +38,5 @@ urlpatterns = patterns('',
     url('^admin/logout/$', logout, {'next_page': '/'}, name='log-out'),
     url('^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed',
         {'feed_dict': feeds}, name='feeds'),
+    url('^(?P<permalink>.*)$', entry_detail),
 )

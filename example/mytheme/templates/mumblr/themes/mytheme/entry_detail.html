@@ -1,63 +1,93 @@
 {% extends "mumblr/themes/mytheme/base.html" %}
 
+{% block title %}{{ entry.title }}{% endblock %}
+
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="edit-box">
-            <a href="{% url edit-entry entry.id %}">Edit</a> |
-            <form style="display: inline" action="{% url delete-entry %}" method="post">
-                <input type="hidden" value="{{ entry.id }}" name="entry_id" />
-                <input type="submit" value="Delete" class="mbl-button mbl-button-primary" />
-            </form>
-        </div>
-    {% endif %}
-    <div class="post-info">
-        <p><span class="date">{{ entry.publish_date|date:"F jS, Y" }}</span></p>
-        {% if entry.tags %}
-            Tagged as
-            {% for tag in entry.tags %}
-                <a class="tag" href="{% url tagged-entries tag %}"><span>{{ tag }}</span></a>
-                {% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        {% endif %}
-    </div>
-    {{ entry.rendered_content|safe }}
-    
-    <h3>Discussion</h3>
-    <a name="comments"></a>
-    {% if entry.comments_enabled %}
-        {% if entry.comments %}
-            <ul class="comments-list">
-            {% for comment in entry.comments %}
-                <div class="comment-info">
-                    <strong>{{ comment.author }}</strong> ({{ comment.date|timesince:datenow }} ago)
-                    {% if user.is_authenticated %}
-                        <div>
-                            <form action="{% url delete-comment %}" method="post">
-                                <input type="hidden" value="{{ comment.id }}" name="comment_id" />
-                                <input type="submit" value="Delete" class="mbl-button mbl-button-primary" />
-                            </form>
-                        </div>
-                    {% endif %}
-                </div>
-                {{ comment.rendered_content|safe }}
-                </li>
-            {% endfor %}
-            </ul>
+<h2>
+    {% if entry.link_url %}
+        <a target="_blank" class="external-link" href="/{{ entry.link_url }}">
+    {% else %}
+        {% if entry.video_url %}
+            <a target="_blank" class="video" href="{{ entry.video_url }}">
         {% else %}
-            There are no comments for this post.
+            <a href="{{ entry.get_absolute_url }}">
         {% endif %}
-        <div class="clear"></div>
-        <h3>Leave A Reply</h3>
-        <p>You may use <a href="http://daringfireball.net/projects/markdown/basics">Markdown</a> syntax but raw HTML will be escaped and headings normalised.</p>
-        <form action="" method="post">
-            <table>
-                {{ form }}
-                <tr>
-                    <th></th><td><input type="submit" value="Save" /></td>
-                </tr>
-            </table>
+    {% endif %}
+        {{ entry.title }}
+    </a>
+</h2>
+<div class="post-info">
+{% if user.is_authenticated %}
+    <div class="edit-box">
+        <a class="mbl-button" href="{% url edit-entry entry.id %}">Edit</a>&nbsp;
+        <form action="{% url delete-entry %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ entry.id }}" name="entry_id" />
+            <input type="submit" value="Delete" class="mbl-button mbl-button-primary" />
         </form>
-        {% else %}
-            Comments for this post are closed
-    {% endif %}
+    </div>
+{% endif %}
+<p>
+<span class="date">{{ entry.publish_date|date:"F jS, Y" }}</span>
+&mdash;
+<a href="{{ entry.get_absolute_url }}#disqus_thread"></a>
+&mdash;
+<a href="{{ entry.get_absolute_url }}" class="permalink">Permalink</a>
+</p>
+{% if entry.tags %}
+    <ul class="inline-tag-list">
+    {% for tag in entry.tags %}
+        <li><a class="tag" href="{% url tagged-entries tag %}"><span>{{ tag }}</span></a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+<div class="clear"></div>
+</div>
+{{ entry.rendered_content|safe }}
+{% if entry.expiry_date %}
+<hr/>
+<p>This post will expire in {{ entry.expiry_date|timeuntil }}</p>
+{% endif %}
+
+<div class="topsy_widget_data"><!--
+  {
+    "url": "http://www.colinhowe.co.uk{{ entry.get_absolute_url }}",
+    "title": "{{ entry.title }}",
+    "style": "big",
+    "theme": "silver"
+
+  }
+  --></div
+
+<div class="hr-styled"></div>
+<h3>Discussion</h3>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'colinhowe'; // required: replace example with your forum shortname
+
+    // The following are highly recommended additional parameters. Remove the slashes in front to use.
+    var disqus_identifier = '{{ entry.id }}';
+    var disqus_developer = 1;
+    var disqus_url = 'http://www.colinhowe.co.uk{{ entry.get_absolute_url }}';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+<script src="http://cdn.topsy.com/topsy.js?init=topsyWidgetCreator" type="text/javascript"></script>
+
 {% endblock %}

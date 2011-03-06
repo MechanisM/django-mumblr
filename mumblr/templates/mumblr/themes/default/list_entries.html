@@ -56,7 +56,7 @@
             {% endif %}
             <div class="clear"></div>
             </div>
-        {{ entry.rendered_content|safe|typogrify }}
+            {{ entry.rendered_content|striptags|truncatewords:50|safe }}
     </div>
 {% endfor %}
 {% if entries.has_other_pages %}

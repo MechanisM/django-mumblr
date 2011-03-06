@@ -2,29 +2,66 @@
 
 {% load smart_if %}
 
+{% block title %}Archive{% endblock %}
+
 {% block content %}
-    <h3>Browse By Type</h3>
-    <div>
-        <strong><a href="{% url archive %}" title="All Entries">All</a></strong>
-    {% for type in entry_types %}
-        | <strong><a href="{% url archive type|lower %}" title="New {{ type }} post">{{ type }}</a></strong>
-    {% endfor %}
-    </div>
-    <h3>{{ entry_type }} Entries</h3>
-    <ul class="lined-list">
-        {% if entries %}
-            {% for entry in entries.object_list %}
-                <li>
-                    {% if entry.link_url %}
-                        <a href="{{ entry.link_url }}">
-                    {% else %}
-                        <a href="{{ entry.get_absolute_url }}" title="{{ entry.title|safe }}">
-                    {% endif %}
-                    {{ entry.title|truncatewords:8|safe }}</a></span>&nbsp;<span>{{ entry.publish_date|date:"F jS, Y" }}</span>
-                </li>
-            {% endfor %}
+<h2>Archive</h2>
+<div class="clear"></div>
+
+<h3>Browse By Type</h3>
+<ul class="inline">
+    <li><a class="mbl-button" href="{% url archive %}" title="All Entries">All</a></li>
+{% for type in entry_types %}
+    <li><a class="mbl-button" href="{% url archive type|lower %}" title="New {{ type }} post">{{ type }}</a></li>
+{% endfor %}
+</ul>
+<div class="clear"></div>
+<h3>{{ entry_type }} Entries&nbsp; { {{ num_entries }} }</h3>
+<ul class="lined-list">
+{% if not entries.object_list %}
+    <p> There are no entries.</p>
+{% endif %}
+{% for entry in entries.object_list %}
+    {% if forloop.first %}
+    <li class="first">
+    {% else %}
+        {% if forloop.last %}
+        <li class="last">
         {% else %}
-            <p> There are no entries.</p>
+        <li>
         {% endif %}
-    </ul>
+    {% endif %}
+    <span class="title">
+    {% if entry.link_url %}
+        <a href="{{ entry.link_url }}">
+    {% else %}
+        <a href="{{ entry.get_absolute_url }}" title="{{ entry.title|safe }}">
+    {% endif %}
+    {{ entry.title|truncatewords:8|safe }}</a></span>&nbsp;<span class="date">{{ entry.publish_date|date:"F jS, Y" }}</span>
+    <div class="edit-box">
+    {% if entry.comments_enabled %}
+    <a href="{{ entry.get_absolute_url }}#comments" title="Comments" class="comments-small">{{ entry.comments|length|default:0|safe }}</a>
+    {% else %}
+    <span class="comments-small">Off</span>
+    {% endif %} 
+    </div>
+    </li>
+{% endfor %}
+</ul>
+{% if entries.object_list %}
+<div class="pagination">
+{% spaceless %}
+{% if entries.has_previous %}
+    <a href="{% url archive entries.previous_page_number %}">&laquo; Newer</a>
+{% else %}
+    <span class="disabled">&laquo; Newer</span>
+{% endif %}
+{% if entries.has_next %}
+    <a href="{% url archive entries.next_page_number %}">Older &raquo;</a>
+{% else %}
+    <span class="disabled">Older &raquo;</span>
+{% endif %}
+{% endspaceless %}
+</div>
+{% endif %}
 {% endblock %}

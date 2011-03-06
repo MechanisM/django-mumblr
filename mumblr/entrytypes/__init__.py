@@ -1,6 +1,6 @@
 from django import forms
 from django.conf import settings
-from django.db.models import permalink
+from django.db import models
 from django.forms.extras.widgets import SelectDateWidget
 import fields
 
@@ -82,6 +82,7 @@ class EntryType(Document):
     """
     title = StringField(required=True)
     slug = StringField(required=True, regex='[A-z0-9_-]+')
+    permalink = StringField(required=False, default="", regex='[A-z0-9_/-]*')
     author = ReferenceField(User)
     creation_date = DateTimeField(required=True, default=datetime.now)
     tags = ListField(StringField(max_length=50))
@@ -107,10 +108,13 @@ class EntryType(Document):
                  published=True, publish_date__lte=cutoff_date)
         return queryset.order_by('-publish_date')
 
-    @permalink
-    def get_absolute_url(self):
+    @models.permalink
+    def get_dated_url(self):
         date = self.publish_date.strftime('%Y/%b/%d').lower()
         return ('entry-detail', (date, self.slug))
+
+    def get_absolute_url(self):
+        return "/" + (self.permalink or self.get_dated_url())
 
     def rendered_content(self):
         raise NotImplementedError()
@@ -126,6 +130,7 @@ class EntryType(Document):
     class AdminForm(forms.Form):
         title = forms.CharField()
         slug = forms.CharField()
+        permalink = forms.CharField(required=False)
         tags = forms.CharField(required=False)
         published = forms.BooleanField(required=False, initial=True)
         this_year = date.today().year
@@ -135,10 +140,6 @@ class EntryType(Document):
             ),
         )
         publish_time = forms.TimeField()
-        expiry_date = forms.DateTimeField(
-            widget=SelectDateWidget(required=False),
-            required=False)
-        expiry_time = forms.TimeField(required=False)
         comments_enabled = forms.BooleanField(
             required=False,
             label="Comments",
@@ -171,34 +172,17 @@ class EntryType(Document):
                 # the DB its actually just part of publish_date, so update
                 # publish_date to include publish_time's info
                 publish_time = data['publish_time']
-                expiry_time = data['expiry_time']
                 if publish_time and data['publish_date']:
                     data['publish_date'] = data['publish_date'].replace(
                         hour=publish_time.hour,
                         minute=publish_time.minute,
                         second=publish_time.second)
-                if expiry_time and data['expiry_date']:
-                    data['expiry_date'] = data['expiry_date'].replace(
-                        hour=expiry_time.hour,
-                        minute=expiry_time.minute,
-                        second=expiry_time.second)
 
                 # The comments expiry date is selected and stored as a relative
                 # time from the publish_date but it is useful to have an actual
                 # expiry date too, so we work it out here
-                comments_expiry = data['comments_expiry']
                 publish_date = data['publish_date']
-                if comments_expiry:
-                    data['comments_expiry_date'] = {
-                        # With no simple way of adding an exact month,
-                        # approximate day representations are used
-                        'never': lambda now: None,
-                        'week': lambda now: now + timedelta(7),
-                        'month': lambda now: now + timedelta(30),
-                        'half_year': lambda now: now + timedelta(182),
-                    }[comments_expiry](publish_date)
-                else:
-                    data['comments_expiry_date'] = None
+                data['comments_expiry_date'] = None
 
             return data
         
