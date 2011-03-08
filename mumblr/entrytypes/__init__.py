@@ -114,7 +114,9 @@ class EntryType(Document):
         return ('entry-detail', (date, self.slug))
 
     def get_absolute_url(self):
-        return "/" + (self.permalink or self.get_dated_url())
+        if self.permalink:
+            return "/" + self.permalink
+        return self.get_dated_url()
 
     def rendered_content(self):
         raise NotImplementedError()
