@@ -57,18 +57,18 @@
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    var time_on_page = 0;
-    var tracking_interval = 5000;
-    setInterval(function() {
-      time_on_page += tracking_interval;
-      _gaq.push(['_trackEvent', 'time_on_page', time_on_page, document.location])
-    }, tracking_interval);
   })();
 
   $(document).ready(function() {
     $('a[href^=http]:not("[href*=://' + document.domain + ']")').click(function() {
       _gaq.push(['_trackPageview', '/out/' + $(this).attr("href")]);
     });
+    var time_on_page = 0;
+    var tracking_interval = 5000;
+    setInterval(function() {
+      time_on_page += tracking_interval;
+      _gaq.push(['_trackEvent', 'time_on_page', '' + time_on_page, document.location])
+    }, tracking_interval);
   });
 
 </script>
