@@ -65,5 +65,11 @@
     }, tracking_interval);
   })();
 
+  $(document).ready(function() {
+    $('a[href^=http]:not("[href*=://' + document.domain + ']")').click(function() {
+      _gaq.push(['_trackPageview', '/out/' + $(this).attr("href")]);
+    });
+  });
+
 </script>
 </html>
