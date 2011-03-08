@@ -67,7 +67,7 @@
     var tracking_interval = 5000;
     setInterval(function() {
       time_on_page += tracking_interval;
-      _gaq.push(['_trackEvent', 'time_on_page', '' + time_on_page, document.location])
+      _gaq.push(['_trackPageview', '/time_on_page/' + document.location + '/' + time_on_page])
     }, tracking_interval);
   });
 
