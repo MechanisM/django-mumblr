@@ -64,7 +64,7 @@
       _gaq.push(['_trackPageview', '/out/' + $(this).attr("href")]);
     });
     var time_on_page = 0;
-    var tracking_interval = 5000;
+    var tracking_interval = 15000;
     setInterval(function() {
       time_on_page += tracking_interval;
       _gaq.push(['_trackPageview', '/time_on_page/' + document.location + '/' + time_on_page])
