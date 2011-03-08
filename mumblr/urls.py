@@ -38,5 +38,6 @@ urlpatterns += patterns('',
     url('^admin/logout/$', logout, {'next_page': '/'}, name='log-out'),
     url('^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed',
         {'feed_dict': feeds}, name='feeds'),
+    url('^feed/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds, 'url': 'rss'}, name='feeds'),
     url('^(?P<permalink>.*)$', entry_detail),
 )
