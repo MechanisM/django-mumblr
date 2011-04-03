@@ -591,3 +591,7 @@ li .edit-box {
 .pagination a:hover {
     border-color: #999;
 }
+
+#disqus_thread {
+    text-align: left;
+}
