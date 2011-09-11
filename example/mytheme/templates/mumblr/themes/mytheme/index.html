@@ -1,0 +1,117 @@
+{% extends "mumblr/themes/mytheme/base.html" %}
+
+{% block title %}Colin Howe{% endblock %}
+
+{% block content %}
+<h1 class="index">Colin Howe</h1>
+<div class="right-col-big"><div class="inner">
+    <h2>Me on the net</h2>
+    <a href="http://github.com/colinhowe">Github</a><br />
+    <a href="http://twitter.com/colinhowe">Twitter (@colinhowe)</a>
+
+    <h2>Recent Blog Entries</h2>
+    <div class="recent-posts">
+        {% for entry in entries.object_list %}
+        <h5>
+            {% if entry.link_url %}
+                <a target="_blank" class="external-link" href="{{ entry.link_url }}">
+            {% else %}
+                {% if entry.video_url %}
+                <a target="_blank" class="video" href="{{ entry.video_url }}">
+                {% else %}
+                <a href="{{ entry.get_absolute_url }}">
+                {% endif %}
+            {% endif %}
+            {{ entry.title|safe}}</a>
+        </h5>
+        {% endfor %}
+        <a href="/recent/">More recent posts</a>
+    </div> 
+    <h2>Twitter</h2>
+    <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 4,
+  interval: 30000,
+  width: 'auto',
+  height: 300,
+  theme: {
+    shell: {
+      background: '#ffffff',
+      color: '#000000'
+    },
+    tweets: {
+      background: '#ffffff',
+      color: '#000000',
+      links: '#000000'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: false,
+    live: false,
+    hashtags: true,
+    timestamp: true,
+    avatars: true,
+    behavior: 'all'
+  }
+}).render().setUser('colinhowe').start();
+</script>
+
+</div></div>
+<div class="left-col-big">
+    <img src="{{ MEDIA_URL }}mumblr/themes/default/images/me.jpg" class="intro" />
+    <p class="intro">Hi, I'm Colin.<br/>
+    I like coding and learning things. I like to share what I've learnt with everyone else.<br />
+    I'm VP of engineering at <a href="http://www.conversocial.com">Conversocial</a></p>
+
+    <h2>Projects</h2>
+    <h4><a href="http://github.com/colinhowe/djangosqlsampler">Django SQL Sampler</a></h4>
+    <p>This app for Django will sample a set percentage of SQL queries and collate them together. This allows you
+    to see what queries are slowing down your site the most.</p>
+
+    
+    <h4><a href="http://github.com/colinhowe/mysqlpartialdump">MySQL Partial Dumper</a></h4>
+    <p>Ever wanted to get a MySQL dump of a single customers account? This little Python tool will do just that!</p>
+
+    
+    <h4><a href="http://github.com/colinhowe/eventlet_visualiser">Eventlet Visualiser</a></h4>
+    <p>Visualises what is going on in Eventlet and can be useful in finding problems. <a href="http://www.colinhowe.co.uk/2011/aug/17/visualising-eventlet/">Blog post with screenshot</a></p>
+
+
+    <h4><a href="http://github.com/colinhowe/eventlet_profiler">Eventlet Profiler</a></h4>
+    <p>A profiler that is aware of Eventlet.</p>
+
+    <h4><a href="https://github.com/colinhowe/gleam-python">Gleam for Python</a></h4>
+    <p>A resurrection of an old project I wrote for Scala. Gleam is a view layer language that compiles down to Python and Javascript - freeing you from having to double code interfaces.</p>
+
+    <h2>List of OSS Contributions</h2>
+    <h4>Ongoing</h4>
+    <h5><a href="http://mongoengine.org">MongoEngine</a></h5>
+    <p>I submit patches to MongoEngine on a fairly frequent basis. Of note:</p>
+    <ul>
+        <li>More flexible index specification</li>
+        <li>Support for spare indexes</li>
+        <li>Improved bulk fetching</li>
+        <li>Bulk insert signals</li>
+        <li>Improved validation warnings</li>
+    </ul>
+
+    <h4>2011</h4>
+    <ul>
+        <li>September - Mongo plugin for DjangoDebugToolbar - <a href="https://github.com/hmarr/django-debug-toolbar-mongo/pull/3">Fix setup.py to include templates</a></li>
+        <li>Auguest - Mongo plugin for DjangoDebugToolbar - <a href="https://github.com/hmarr/django-debug-toolbar-mongo/pull/1">Allow safe, multi and upsert to be passed through</a></li>
+    </ul>
+
+    <h4>2009</h4>
+    <ul>
+        <li>December - Remove duplicate import suggestions from Scala Eclipse plugin [commit 20264]</li>
+        <li>November - Various pieces on Scala Eclipse plugin around auto-complete, indentation and highlighting</li>
+        <li>September - Minor fix to ScalaTest to make tests appear rooted within Eclipse.</li>
+
+    </ul>
+
+</div>
+{% endblock %}

@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-    font-size: 1.8em;
+    font-size: 2.4em;
     margin: 0;
     display: inline;
     clear: none;
@@ -602,4 +602,66 @@ li .edit-box {
 
 #disqus_thread {
     text-align: left;
+}
+
+.post-wrapper, .right-col-big {
+    float: left;
+    width: 100%;
+}
+
+.post {
+    margin-left: 200px;
+}
+
+.right-col-big .inner {
+    margin-left: 450px;
+}
+
+h1.index {
+    text-align: center;
+    line-height: 50px;
+    margin: 0 auto;
+    display: block;
+}
+
+img.intro {
+    float: left;
+    padding-right: 15px;
+    padding-bottom: 15px;
+}
+
+p.intro {
+    font-size: 18px;
+    line-height: 24px;
+    margin-top: 0;
+}
+
+.left-col-big {
+    font-size: 14px;
+    line-height: 18px;
+    float: left;
+    width: 400px;
+    margin-left: -100%;
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+.about-me {
+    font-size: 12px;
+    line-height: 18px;
+    float: left;
+    width: 150px;
+    margin-left: -100%;
+    margin-right: 10px;
+}
+
+.about-me li {
+  list-style-image: none;  
+  list-style-type: none;
+  padding: 3px 0;
+}
+
+.about-me ul {
+  padding: 0;
+  margin: 0;
 }

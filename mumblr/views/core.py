@@ -71,6 +71,24 @@ def recent_entries(request, page_number=1):
     return render_to_response(_lookup_template('list_entries'), context,
                               context_instance=RequestContext(request))
 
+def index(request):
+    num = 5
+    entry_list = list(EntryType.live_entries())
+    
+    entry_list = sorted(entry_list, lambda e1, e2: cmp(e2.publish_date, e1.publish_date))
+    paginator = Paginator(entry_list, num)
+    try:
+        entries = paginator.page(1)
+    except (EmptyPage, InvalidPage):
+        entries = paginator.page(paginator.num_pages)
+    context = {
+        'title': 'Recent Entries',
+        'entries': entries,
+        'no_entries_messages': NO_ENTRIES_MESSAGES,
+    }
+    return render_to_response(_lookup_template('index'), context, context_instance=RequestContext(request))
+
+
 def entry_detail(request, date=None, slug=None, permalink=None):
     """Display one entry with the given slug and date.
     """

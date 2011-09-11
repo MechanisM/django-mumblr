@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib.auth.views import login, logout
 from mumblr.views.core import (recent_entries, tagged_entries, entry_detail, 
-                               tag_cloud, archive, RssFeed, AtomFeed)
+                               tag_cloud, archive, RssFeed, AtomFeed, index)
 from mumblr.views.admin import (dashboard, delete_entry, add_entry, edit_entry,
                                 delete_comment)
 
@@ -16,8 +16,9 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('',
-    url('^$', recent_entries, name='recent-entries'),
-    url('^(?P<page_number>\d+)/$', recent_entries, name='recent-entries'),
+    url('^$', index, name='index'),
+    url('^recent/$', recent_entries, name='recent-entries'),
+    url('^recent/(?P<page_number>\d+)/$', recent_entries, name='recent-entries'),
     url('^(\d{4}/\w{3}/\d{2})/([\w-]+)/$', entry_detail, name='entry-detail'),
     url('^tag/(?P<tag>[a-z0-9_-]+)/$', tagged_entries, name='tagged-entries'),
     url('^tag/(?P<tag>[a-z0-9_-]+)/(?P<page_number>\d+)/$', tagged_entries, 

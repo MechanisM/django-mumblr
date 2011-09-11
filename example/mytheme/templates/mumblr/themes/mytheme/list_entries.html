@@ -3,6 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<div class="post-wrapper"><div class="post">
 {% if not entries.object_list %}
     There are no recent entries. {{ no_entries_messages|random|safe }}
 {% endif %}
@@ -79,4 +80,8 @@
 {% endspaceless %}
 </div>
 {% endif %}
+</div></div>
+<div class="about-me">
+    {% include "mumblr/themes/mytheme/about_me.html" %}
+</div>
 {% endblock %}
